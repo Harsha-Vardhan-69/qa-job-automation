@@ -1,6 +1,13 @@
 name: QA Job Search Automation
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/job-search.yml"
+      - "job_scraper.py"
+      - "requirements.txt"
   schedule:
     - cron: '30 2 * * *'
   workflow_dispatch:
