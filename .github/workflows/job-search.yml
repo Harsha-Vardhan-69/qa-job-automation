@@ -34,5 +34,5 @@ jobs:
           password: ${{ secrets.EMAIL_PASS }}
           subject: Daily QA Job Report
           to: harshavardhanvallabhaneni@gmail.com
-          from: QA Job Bot
+          from: QA Job Search Bot
           attachments: jobs.xlsx
