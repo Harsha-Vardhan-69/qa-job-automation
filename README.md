@@ -1,6 +1,7 @@
 # qa-job-automation
 
 Automated daily QA job monitor that:
+
 - runs at **08:00 IST (02:30 UTC)** using GitHub Actions cron
 - fetches jobs across multiple sources (JSearch-backed boards + RemoteOK + YC)
 - filters by keywords, location constraints, posting recency, and salary threshold

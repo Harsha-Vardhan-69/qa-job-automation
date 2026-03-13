@@ -1,4 +1,4 @@
-name: Daily QA Job Search
+name: QA Job Search Automation
 
 on:
   schedule:
@@ -6,14 +6,15 @@ on:
   workflow_dispatch:
 
 jobs:
-  run-job-search:
+  run-search:
     runs-on: ubuntu-latest
 
     steps:
+
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Python
+      - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
@@ -21,19 +22,17 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Run scraper
-        env:
-          RAPIDAPI_KEY: ${{ secrets.RAPIDAPI_KEY }}
-          SMTP_HOST: ${{ secrets.SMTP_HOST }}
-          SMTP_PORT: ${{ secrets.SMTP_PORT }}
-          SMTP_USER: ${{ secrets.SMTP_USER }}
-          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
-          EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
-          REPORT_RECIPIENT: harshavardhanvallabhaneni@gmail.com
+      - name: Run job scraper
         run: python job_scraper.py
 
-      - name: Upload generated report
-        uses: actions/upload-artifact@v4
+      - name: Send Email
+        uses: dawidd6/action-send-mail@v3
         with:
-          name: jobs-report
-          path: jobs.xlsx
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.EMAIL_USER }}
+          password: ${{ secrets.EMAIL_PASS }}
+          subject: Daily QA Job Report
+          to: harshavardhanvallabhaneni@gmail.com
+          from: QA Job Bot
+          attachments: jobs.xlsx
