@@ -7,7 +7,9 @@ on:
     paths:
       - ".github/workflows/job-search.yml"
       - "job_scraper.py"
+      - "job_pipeline/**"
       - "requirements.txt"
+      - "scripts/run_pipeline.sh"
   schedule:
     - cron: '30 2 * * *'
   workflow_dispatch:
@@ -32,7 +34,7 @@ jobs:
       - name: Run job scraper
         env:
           RAPIDAPI_KEY: ${{ secrets.RAPIDAPI_KEY }}
-        run: python job_scraper.py
+        run: ./scripts/run_pipeline.sh
 
       - name: Send Email
         uses: dawidd6/action-send-mail@v3
@@ -44,4 +46,4 @@ jobs:
           subject: Daily QA Job Report
           to: harshavardhanvallabhaneni@gmail.com
           from: QA Job Search Bot
-          attachments: jobs.xlsx
+          attachments: artifacts/jobs.xlsx
