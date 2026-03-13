@@ -3,6 +3,21 @@ import pandas as pd
 from datetime import datetime
 from bs4 import BeautifulSoup
 
+JOB_COLUMNS = [
+    "Job Title",
+    "Company",
+    "Location",
+    "Salary",
+    "Source",
+    "Direct Apply Link",
+    "Posted Date",
+    "Experience Required",
+    "Required Skills",
+    "Job Type",
+    "Job ID",
+    "Application Deadline",
+]
+
 KEYWORDS = [
     "QA Tester",
     "Quality Assurance Engineer",
@@ -21,21 +36,33 @@ LOCATIONS = [
 ]
 
 def search_indeed(keyword):
-    url = f"https://in.indeed.com/jobs?q={keyword}&fromage=1"
-    r = requests.get(url, headers={"User-Agent":"Mozilla/5.0"})
+    url = "https://in.indeed.com/jobs"
+    r = requests.get(
+        url,
+        params={"q": keyword, "fromage": "1"},
+        headers={"User-Agent": "Mozilla/5.0"},
+        timeout=20,
+    )
+    r.raise_for_status()
     soup = BeautifulSoup(r.text, "html.parser")
 
     jobs = []
 
     for card in soup.select(".job_seen_beacon"):
-        title = card.select_one("h2").text.strip()
-        company = card.select_one(".companyName").text.strip()
+        title_el = card.select_one("h2")
+        company_el = card.select_one(".companyName")
+        if not title_el or not company_el:
+            continue
+
+        title = title_el.text.strip()
+        company = company_el.text.strip()
 
         loc_el = card.select_one(".companyLocation")
         location = loc_el.text.strip() if loc_el else "Not listed"
 
         link_el = card.select_one("a")
-        link = "https://in.indeed.com" + link_el["href"]
+        href = link_el.get("href", "") if link_el else ""
+        link = f"https://in.indeed.com{href}" if href else "Not listed"
 
         jobs.append({
             "Job Title": title,
@@ -65,9 +92,9 @@ def run():
         except Exception as e:
             print("Error:", e)
 
-    df = pd.DataFrame(all_jobs)
-
-    df = df.sort_values(by="Posted Date", ascending=False)
+    df = pd.DataFrame(all_jobs, columns=JOB_COLUMNS)
+    if not df.empty:
+        df = df.sort_values(by="Posted Date", ascending=False)
 
     df.to_excel("jobs.xlsx", index=False)
 
