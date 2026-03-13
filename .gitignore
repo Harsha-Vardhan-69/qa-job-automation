@@ -1,2 +1,34 @@
+# Python bytecode
 __pycache__/
 *.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Test and lint caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Notebook checkpoints
+.ipynb_checkpoints/
+
+# Generated outputs
+artifacts/*.xlsx
+artifacts/*.json
+jobs.xlsx
+jobs.json
+!artifacts/.gitkeep
+
+# Local environment files
+.env
+.env.*
+!.env.example
+
+# IDE / OS files
+.DS_Store
+.idea/
+.vscode/
